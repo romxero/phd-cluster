@@ -1,0 +1,7 @@
+ansible
+ansible-core
+
+
+
+#package_name_1==1.2.3
+#package_name_2==2.0.0
