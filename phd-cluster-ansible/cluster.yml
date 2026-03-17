@@ -1,0 +1,24 @@
+---
+all:
+    children:
+      controller:
+      workstation:
+      compute:
+controller:
+  hosts:
+    phd-controller:
+      CONTROLLER_IFACE: "enp3s0"
+      CONTROLLER_IFACE_IP: "192.168.1.238"
+      CONTROLLER_HOSTNAME: "phd-controller"
+workstation:
+  hosts:
+    aux:
+      CONTROLLER_IFACE: "enp2s0"
+      CONTROLLER_IFACE_IP: "192.168.1.197"
+      CONTROLLER_HOSTNAME: "aux"
+compute:
+  hosts:
+    compute-01:
+      COMPUTE_IFACE: "enp4s0"
+      COMPUTE_IFACE_IP: "192.168.1.195"
+      COMPUTE_HOSTNAME: "compute-01"

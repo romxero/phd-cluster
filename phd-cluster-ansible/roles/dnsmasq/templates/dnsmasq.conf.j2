@@ -1,0 +1,12 @@
+# Main phd-cluster dnsmasq config
+
+# If you want dnsmasq to change uid and gid to something other
+# than the default, edit the following lines.
+user={{ DNSMASQ_USER }}
+group={{ DNSMASQ_GROUP }}
+
+# want dnsmasq to really bind only the interfaces it is listening on,
+bind-interfaces
+
+# Include all files in /etc/dnsmasq.d except RPM backup files
+conf-dir=/etc/dnsmasq.d,.rpmnew,.rpmsave,.rpmorig

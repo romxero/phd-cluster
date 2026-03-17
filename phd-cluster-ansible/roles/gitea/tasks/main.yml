@@ -1,0 +1,106 @@
+---
+
+- name: create gitea group
+  ansible.builtin.group:
+    name: "{{ GITEA_GROUP }}"
+    state: present
+    gid: "{{ GIT_UID }}"
+  tags:
+    - gitea
+    - gita_add_git_group
+
+- name: create gitea user
+  ansible.builtin.user:
+    name: "{{ GITEA_USER }}"
+    group: "{{ GITEA_GROUP }}"
+    state: present
+    uid: "{{ GIT_UID }}"
+    system: true
+  tags:
+    - gitea
+    - gita_add_git_user
+
+- name: create gitea directory tree
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ GITEA_USER }}"
+    group: "{{ GITEA_GROUP }}"
+  with_items: "{{ GITEA_DIRS }}"
+  tags:
+    - gitea
+    - gita_create_gitea_directory_tree
+
+- name: download gitea
+  ansible.builtin.get_url:
+    url: https://github.com/go-gitea/gitea/releases/download/v1.23.7/gitea-1.23.7-linux-amd64
+    dest: "{{ GITEA_PREFIX_DIR }}/bin/gitea"
+    mode: 0755
+  tags:
+    - gitea
+    - gita_download_gitea
+
+- name: generate gitea config script for deployment
+  ansible.builtin.template:
+    src: gitea_conf_gen.sh.j2
+    dest: "{{ GITEA_PREFIX_DIR }}/bin/gitea_conf_gen.sh"
+    mode: 0755
+    owner: "{{ GITEA_USER }}"
+    group: "{{ GITEA_GROUP }}"
+  tags:
+    - gitea
+    - gita_generate_gitea_config_script
+
+- name: open gitea web port
+  ansible.posix.firewalld:
+    port: "{{ GITEA_WEB_SERVING_PORT }}/tcp"
+    permanent: true
+    state: enabled
+    zone: internal
+    immediate: true
+    offline: true
+  tags:
+    - gitea
+    - gita_open_gitea_web_port
+
+- name: open gitea ssh port
+  ansible.posix.firewalld:
+    port: "{{ GITEA_SSH_PORT }}/tcp"
+    permanent: true
+    state: enabled
+    zone: internal
+    immediate: true
+    offline: true
+  tags:
+    - gitea
+    - gita_open_gitea_ssh_port
+
+- name: generate gitea config
+  ansible.builtin.shell:
+    cmd: "{{ GITEA_PREFIX_DIR }}/bin/gitea_conf_gen.sh"
+  tags:
+    - gitea
+    - gita_generate_gitea_config
+
+- name: create gitea service file
+  ansible.builtin.template:
+    src: gitea.service.j2
+    dest: /etc/systemd/system/gitea.service
+    mode: 0644
+    owner: root
+    group: root
+  tags:
+    - gitea
+    - gita_create_gitea_service_file
+
+- name: enable and start gitea service
+  ansible.builtin.systemd:
+    name: gitea.service
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  tags:
+    - gitea
+    - gita_enable_gitea_service
+

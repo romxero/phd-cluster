@@ -1,0 +1,16 @@
+---
+# PHD Cluster Playbook
+    - name: Install base software, and git repo, and dnsmasq
+      hosts: all
+      gather_facts: no
+      roles:
+        - software
+
+    - name: Install management services on controller
+      hosts: controller
+      gather_facts: no
+      roles:
+        - gitea
+        - dnsmasq
+
+    

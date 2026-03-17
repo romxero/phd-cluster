@@ -1,0 +1,10 @@
+---
+# default variables for python deployment
+
+PYTHON_VERSION: "3.13.3"
+
+# python installation directory
+PYTHON_INSTALL_DIR: "/home/romxero/python"
+
+# python build directory
+PYTHON_BUILD_DIR: "/tmp/python_build"

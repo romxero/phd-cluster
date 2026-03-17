@@ -1,0 +1,68 @@
+--- 
+# This role will now just grab the latest miniconda and install it
+
+- name: "download miniconda"
+  ansible.builtin.get_url:
+    url: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    dest: "/tmp/Miniconda3-latest-Linux-x86_64.sh"
+    mode: '0644'
+    owner: root
+    group: root
+  tags:
+    - python
+    - python_miniconda_download
+
+- name: "install miniconda"
+  ansible.builtin.command:
+    cmd: "bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p {{ PYTHON_INSTALL_DIR }}"
+  tags:
+    - python
+    - python_miniconda_install
+
+- name: "clean up miniconda"
+  ansible.builtin.file:
+    path: "/tmp/Miniconda3-latest-Linux-x86_64.sh"
+    state: absent
+  tags:
+    - python
+    - python_miniconda_cleanup
+
+#- name: "download python {{ PYTHON_VERSION }}"
+#  ansible.builtin.get_url:
+#    url: "https://www.python.org/ftp/python/{{ PYTHON_VERSION }}/Python-{{ PYTHON_VERSION }}.tar.xz"
+#    dest: "/tmp/Python-{{ PYTHON_VERSION }}.tar.xz"
+#    mode: '0644'
+#    owner: root
+#    group: root
+#  tags:
+#    - python3.13.3
+#    - python3.13.3_download
+#
+#- name: "extract python {{ PYTHON_VERSION }}"
+#  ansible.builtin.unarchive:
+#    src: "/tmp/Python-{{ PYTHON_VERSION }}.tar.xz"
+#    dest: "/tmp/Python-{{ PYTHON_VERSION }}"
+#    remote_src: true
+#  tags:
+#    - python3.13.3
+#    - python3.13.3_extract
+#
+#- name: "build python {{ PYTHON_VERSION }}"
+#  ansible.builtin.command:
+#    cmd: |
+#      cd /tmp/Python-{{ PYTHON_VERSION }}
+#      ./configure --enable-optimizations --prefix={{ PYTHON_INSTALL_DIR }}
+#      make -j 8
+#      make altinstall
+#  tags:
+#    - python3.13.3
+#    - python3.13.3_build
+#
+#- name: "clean up python build directory"
+#  ansible.builtin.file:
+#    path: "/tmp/Python-{{ PYTHON_VERSION }}"
+#    state: absent
+#  tags:
+#    - python3.13.3
+#    - python3.13.3_cleanup
+

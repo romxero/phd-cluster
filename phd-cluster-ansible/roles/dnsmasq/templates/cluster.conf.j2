@@ -1,0 +1,33 @@
+# cluster configuration
+
+# Listen only on localhost by default
+interface="{{ DNSMASQ_IFACE }}"
+
+# Never forward plain names (without a dot or domain part)
+domain-needed
+# Never forward addresses in the non-routed address spaces
+bogus-priv
+expand-hosts
+# Don't read /etc/resolv.conf or any other
+# file to get the forwarding files.
+no-resolv
+# Add other name servers here, with domain specs if they are for
+# non-public domains.
+{% for nameserver in CLUSTER_NAMESERVERS %}
+server={{ nameserver }}
+{% endfor %}
+# Add local-only domains here, queries in these domains are answered
+# from /etc/hosts or DHCP only.
+local=/{{ CLUSTER_DOMAIN }}/
+# It does the following things.
+# 1) Allows DHCP hosts to have fully qualified domain names, as long
+#     as the domain part matches this setting.
+# 2) Sets the "domain" DHCP option thereby potentially setting the
+#    domain of all systems configured by DHCP
+# 3) Provides the domain part for "expand-hosts"
+domain={{ CLUSTER_DOMAIN }}
+
+
+# Enable dnsmasq to act as a local cache for the host on which it is running
+# and forward all queries to the upstream DNS servers.
+# This is useful for local development and testing environments.

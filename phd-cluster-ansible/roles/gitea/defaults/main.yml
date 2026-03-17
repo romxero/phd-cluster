@@ -1,0 +1,31 @@
+---
+# the defaults for gitea
+
+GITEA_USER: git
+GITEA_GROUP: git
+
+GIT_UID: 70899
+GIT_GID: 70899
+
+GITEA_WEB_SERVING_PORT: 3434
+
+GITEA_APP_NAME: "My Gitea Repo"
+
+GITEA_HOSTNAME: phd-controller # please change this to the actual hostname of the machine, or tailscale domain name
+
+GITEA_PREFIX_DIR: /opt/gitea
+
+GITEA_SSH_PORT: 2424
+GITEA_WEB_PORT: "{{ GITEA_WEB_SERVING_PORT }}"
+
+GITEA_SSH_ENABLED: false
+
+GITEA_DIRS:
+  - "{{ GITEA_PREFIX_DIR }}"
+  - "{{ GITEA_PREFIX_DIR }}/data"
+  - "{{ GITEA_PREFIX_DIR }}/custom"
+  - "{{ GITEA_PREFIX_DIR }}/custom/conf"
+  - "{{ GITEA_PREFIX_DIR }}/log"
+  - "{{ GITEA_PREFIX_DIR }}/bin"
+  - "{{ GITEA_PREFIX_DIR }}/data/gitea-repositories"
+  - "{{ GITEA_PREFIX_DIR }}/data/lfs"

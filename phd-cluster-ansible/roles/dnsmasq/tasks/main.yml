@@ -1,0 +1,73 @@
+---
+- name: add main dnsmasq config
+  ansible.builtin.template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+  tags:
+    - dnsmasq
+    - dnsmasq_config
+
+- name: dnsmasq config
+  ansible.builtin.template:
+    src: cluster.conf.j2
+    dest: /etc/dnsmasq.d/cluster.conf
+  tags:
+    - dnsmasq
+    - dnsmasq_config
+
+- name: ensure name servers are added to /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: '{{ CONTROLLER_IFACE_IP }} {{ CONTROLLER_HOSTNAME }} {{ CONTROLLER_HOSTNAME }}.{{ CLUSTER_DOMAIN }}'
+    state: present
+  tags:
+    - dnsmasq
+    - dnsmasq_config
+
+- name: open dnsmasq port
+  ansible.posix.firewalld:
+    service: dns
+    permanent: true
+    state: enabled
+    immediate: true
+    offline: true
+  tags:
+    - dnsmasq
+    - dnsmasq_open_dnsmasq_port
+
+
+- name: open dnsmasq port
+  ansible.posix.firewalld:
+    port: 53/tcp
+    permanent: true
+    state: enabled
+    zone: internal
+    immediate: true
+    offline: true
+  tags:
+    - dnsmasq
+    - dnsmasq_open_dnsmasq_port
+
+- name: open dnsmasq port
+  ansible.posix.firewalld:
+    port: 53/udp
+    permanent: true
+    state: enabled
+    zone: internal
+    immediate: true
+    offline: true
+  tags:
+    - dnsmasq
+    - dnsmasq_open_dnsmasq_port
+
+
+- name: dnsmasq service
+  ansible.builtin.systemd:
+    name: dnsmasq
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  tags:
+    - dnsmasq
+    - dnsmasq_service
+
